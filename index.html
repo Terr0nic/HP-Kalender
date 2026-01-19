@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Theorie-Unterricht – Kalender</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#fff;
+      --text:#0f172a;
+      --muted:#6b7280;
+      --border:#e6e9f2;
+
+      --holidayBg:#f1f5f9;
+      --holidayBorder:#cbd5e1;
+
+      --radius:16px;
+      --shadow:0 12px 30px rgba(0,0,0,.10);
+
+      --branchAccent:#2563eb;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1280px;margin:24px auto;padding:0 16px}
+    h1{margin:0 0 6px;font-size:22px}
+    .sub{color:var(--muted);font-size:12px;margin-bottom:14px;line-height:1.35}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;position:relative;overflow:hidden}
+    .card.accent::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:var(--branchAccent)}
+
+    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .leftControls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    select,button{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:800;color:#111827;cursor:pointer}
+    button.secondary{background:#eef2ff}
+    .monthTitle{font-weight:950;font-size:15px}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:7px 10px;font-size:12px;background:#fafbff;color:#111827}
+    .pill strong{color:var(--branchAccent)}
+
+    .viewbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+    .viewbar button{padding:9px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:#111827;font-weight:950}
+    .viewbar button.active{background:#111827;color:#fff;border-color:#111827}
+
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+    .legend .pill{background:#fff}
+    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .dot.pkw{background:#2563eb}
+    .dot.hafen{background:#f59e0b}
+    .dot.holiday{background:#94a3b8}
+    .dot.off{background:#ef4444}
+
+    table.cal{width:100%;border-collapse:separate;border-spacing:8px}
+    .cal th{font-size:12px;color:#555;text-align:left;padding:0 6px}
+    .day{border:1px solid var(--border);border-radius:16px;padding:10px;min-height:118px;background:linear-gradient(180deg,#fff 0%, #fbfcff 100%);transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease}
+    .day:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(16,24,40,.10);border-color:rgba(37,99,235,.25)}
+    .day.muted{opacity:.45}
+    .date{font-size:12px;color:#555;display:flex;justify-content:space-between;gap:8px}
+
+    @keyframes pulseRing {
+      0%   { box-shadow:0 0 0 0 rgba(37,99,235,.35); }
+      70%  { box-shadow:0 0 0 8px rgba(37,99,235,0); }
+      100% { box-shadow:0 0 0 0 rgba(37,99,235,0); }
+    }
+    .day.today{outline:2px solid rgba(37,99,235,.25);outline-offset:2px;animation:pulseRing 2.2s ease-out infinite}
+
+    .badges{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+    .badge{border-radius:14px;padding:8px 9px;font-size:12px;border:1px solid rgba(0,0,0,.06);line-height:1.25;background:#f3f6ff}
+    .badge .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:#fff;white-space:nowrap}
+
+    .badge.hafen{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.24)}
+    .badge.off{background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.24)}
+    .badge.holiday{background:var(--holidayBg) !important;border-color:var(--holidayBorder) !important;color:#475569;font-style:italic}
+    .badge.holiday strong{font-style:normal;color:#334155}
+
+    .list{margin-top:12px}
+    .list h3{margin:12px 0 10px;font-size:16px}
+    .item{border:1px solid var(--border);border-radius:16px;padding:10px;background:#fff}
+    .item + .item{margin-top:10px}
+    .when{font-weight:950}
+    .small{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>🚦 Theorie-Unterricht</h1>
+  <div class="sub">Filiale auswählen • Monat wechseln • Kalender/Liste ansehen</div>
+
+  <div class="card accent" id="mainCard">
+    <div class="topbar">
+      <div class="leftControls">
+        <select id="branch"></select>
+        <button class="secondary" id="prevMonth" type="button">←</button>
+        <button class="secondary" id="goToday" type="button">Heute</button>
+        <button class="secondary" id="nextMonth" type="button">→</button>
+      </div>
+      <div class="monthTitle" id="monthTitle"></div>
+      <div class="pill" id="stat">—</div>
+    </div>
+
+    <div class="viewbar">
+      <button id="viewBoth" class="active" type="button">Beides</button>
+      <button id="viewCal" type="button">Kalender</button>
+      <button id="viewList" type="button">Liste</button>
+    </div>
+
+    <div class="legend">
+      <span class="pill"><span class="dot pkw"></span>PKW Thema</span>
+      <span class="pill"><span class="dot hafen"></span>Hafen LKW/BUS</span>
+      <span class="pill"><span class="dot holiday"></span>Feiertag</span>
+      <span class="pill"><span class="dot off"></span>OFF</span>
+    </div>
+
+    <div id="calendarWrap" style="margin-top:10px">
+      <table class="cal">
+        <thead><tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr></thead>
+        <tbody id="calBody"></tbody>
+      </table>
+    </div>
+
+    <div class="list" id="listWrap"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const CONFIG = {
+    anchors: {
+      hemshof:    { date: "2026-01-20", lessonNo: 2 },
+      innenstadt: { date: "2026-01-19", lessonNo: 1 },
+      seckenheim: { date: "2026-01-20", lessonNo: 9 }
+    },
+    closures: {
+      hemshof: [],
+      innenstadt: [],
+      seckenheim: [],
+      hafen: []
+    }
+  };
+
+  const TOPICS = [
+    "Persönliche Voraussetzungen / Risikofaktor Mensch",
+    "Rechtliche Rahmenbedingungen",
+    "Grundregeln, Verkehrszeichen und Verkehrseinrichtungen",
+    "Straßenverkehrssystem und seine Nutzung, Bahnübergänge",
+    "Vorfahrt / Vorrang",
+    "Verkehrsregelungen",
+    "Geschwindigkeit, Abstand und umweltschonende Fahrweise",
+    "Andere Teilnehmer im Straßenverkehr",
+    "Verkehrsverhalten bei Fahrmanövern, Verkehrsbeobachtung",
+    "Ruhender Verkehr, Absichern, Abschleppen",
+    "Besondere Situationen, Verstöße gegen Vorschriften",
+    "Lebenslanges Lernen",
+    "Technische Bedingungen, Personen- und Güterbeförderung",
+    "Fahren mit Solokraftfahrzeugen und Zügen, umweltschonender Umgang"
+  ];
+  const TOPIC_EMOJIS = ["🧠","⚖️","🚦","🛤️","➡️","📋","⏱️","🚶‍♂️","👀","🅿️","⚠️","📚","🔧","🌱"];
+
+  const BRANCHES = [
+    { id:"innenstadt", name:"Mannheim Innenstadt", type:"PKW", state:"BW", isoDays:[1,3], timeText:"18:00–19:30", dayLabel:"Mo + Mi", accent:"#2563eb" },
+    { id:"seckenheim", name:"Mannheim Seckenheim", type:"PKW", state:"BW", isoDays:[2,4], timeText:"18:00–19:30", dayLabel:"Di + Do", accent:"#16a34a" },
+    { id:"hemshof", name:"Ludwigshafen Hemshof", type:"PKW", state:"RLP", isoDays:[2,4], timeText:"18:00–19:30", dayLabel:"Di + Do", accent:"#0891b2" },
+    { id:"hafen", name:"Mannheim Hafen (LKW/BUS)", type:"HAFEN", state:"BW", isoDays:[3], timeText:"17:00–20:00", dayLabel:"Mi", accent:"#f59e0b" }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const elBranch = $("branch");
+  const elMonthTitle = $("monthTitle");
+  const elStat = $("stat");
+  const elCalBody = $("calBody");
+  const elListWrap = $("listWrap");
+  const elCalWrap = $("calendarWrap");
+
+  const pad2 = (n)=>String(n).padStart(2,"0");
+  const toISODate = (d)=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  const startOfDay = (d)=>new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const addDays = (d,n)=>new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+  const jsToIso = (jsDay)=>(jsDay===0?7:jsDay);
+  const fmtDE = (d)=>new Intl.DateTimeFormat("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"}).format(d);
+  const escapeHtml = (s)=>String(s)
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+  function getBranch(){ return BRANCHES.find(b=>b.id===elBranch.value) || BRANCHES[0]; }
+  function applyBranchAccent(){
+    const b = getBranch();
+    document.documentElement.style.setProperty("--branchAccent", b.accent || "#2563eb");
+  }
+  function topicStyle(lessonNo){
+    const hue = Math.round((lessonNo - 1) * (360 / 14));
+    return { bg: `hsla(${hue}, 85%, 94%, 1)`, border: `hsla(${hue}, 65%, 72%, 1)` };
+  }
+
+  function parseClosureSet(arr) {
+    const set = new Set();
+    const lines = Array.isArray(arr) ? arr : [];
+    for (const l0 of lines) {
+      const l = String(l0).trim();
+      if (!l) continue;
+      if (l.includes("..")) {
+        const [a,b] = l.split("..").map(x=>x.trim());
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(a) || !/^\d{4}-\d{2}-\d{2}$/.test(b)) continue;
+        let d1 = startOfDay(new Date(a+"T00:00:00"));
+        let d2 = startOfDay(new Date(b+"T00:00:00"));
+        if (d1 > d2) [d1,d2] = [d2,d1];
+        while (d1 <= d2) { set.add(toISODate(d1)); d1 = addDays(d1,1); }
+      } else {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(l)) continue;
+        set.add(l);
+      }
+    }
+    return set;
+  }
+
+  function easterSunday(year) {
+    const a = year % 19, b = Math.floor(year / 100), c = year % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+    const h = (19*a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+    const l = (32 + 2*e + 2*i - h - k) % 7, m = Math.floor((a + 11*h + 22*l) / 451);
+    const month = Math.floor((h + l - 7*m + 114) / 31);
+    const day = ((h + l - 7*m + 114) % 31) + 1;
+    return new Date(year, month - 1, day);
+  }
+  function addHoliday(map, date, name){
+    const k = toISODate(date);
+    if (!map.has(k)) map.set(k, name);
+  }
+  function buildHolidayMap(year, state) {
+    const map = new Map();
+    addHoliday(map, new Date(year,0,1), "Neujahr");
+    addHoliday(map, new Date(year,4,1), "Tag der Arbeit");
+    addHoliday(map, new Date(year,9,3), "Tag der Deutschen Einheit");
+    addHoliday(map, new Date(year,11,25), "1. Weihnachtstag");
+    addHoliday(map, new Date(year,11,26), "2. Weihnachtstag");
+
+    const easter = easterSunday(year);
+    addHoliday(map, addDays(easter,-2), "Karfreitag");
+    addHoliday(map, addDays(easter,1), "Ostermontag");
+    addHoliday(map, addDays(easter,39), "Christi Himmelfahrt");
+    addHoliday(map, addDays(easter,50), "Pfingstmontag");
+
+    if (state === "BW") {
+      addHoliday(map, new Date(year,0,6), "Heilige Drei Könige");
+      addHoliday(map, new Date(year,10,1), "Allerheiligen");
+      addHoliday(map, addDays(easter,60), "Fronleichnam");
+    }
+    if (state === "RLP") {
+      addHoliday(map, new Date(year,10,1), "Allerheiligen");
+      addHoliday(map, addDays(easter,60), "Fronleichnam");
+    }
+    return map;
+  }
+
+  function nextMatchingLessonDay(fromDate, isoDays) {
+    let d = startOfDay(fromDate);
+    for (let i=0;i<20;i++){
+      if (isoDays.includes(jsToIso(d.getDay()))) return d;
+      d = addDays(d,1);
+    }
+    return startOfDay(fromDate);
+  }
+
+  function buildScheduleForward(branch, yearNow, closureSet) {
+    const windowStart = new Date(`${yearNow}-01-01T00:00:00`);
+    const windowEnd   = new Date(`${yearNow+1}-12-31T00:00:00`);
+
+    const holA = buildHolidayMap(yearNow, branch.state);
+    const holB = buildHolidayMap(yearNow+1, branch.state);
+    const holidayMap = new Map([...holA.entries(), ...holB.entries()]);
+
+    const notes = new Map();
+    for (const [dISO, name] of holidayMap.entries()) {
+      if (!notes.has(dISO)) notes.set(dISO, []);
+      notes.get(dISO).push({kind:"HOLIDAY", text:name});
+    }
+
+    let anchorDate = windowStart;
+    let anchorLessonNo = 1;
+
+    if (branch.type === "PKW" && CONFIG.anchors && CONFIG.anchors[branch.id]) {
+      const a = CONFIG.anchors[branch.id];
+      if (a && /^\d{4}-\d{2}-\d{2}$/.test(a.date) && Number.isFinite(a.lessonNo)) {
+        anchorDate = new Date(a.date + "T00:00:00");
+        anchorLessonNo = Math.min(14, Math.max(1, parseInt(a.lessonNo,10)));
+      }
+    }
+    if (branch.type === "PKW") {
+      anchorDate = nextMatchingLessonDay(anchorDate, branch.isoDays);
+    }
+
+    let topicIndex = anchorLessonNo - 1; // forward-only start
+    const events = [];
+    let d = startOfDay(anchorDate);
+
+    while (d <= windowEnd) {
+      const iso = jsToIso(d.getDay());
+      const dateISO = toISODate(d);
+      const isHoliday = holidayMap.has(dateISO);
+      const isClosure = closureSet.has(dateISO);
+
+      if (branch.isoDays.includes(iso)) {
+        if (isHoliday || isClosure) {
+          const reason = [
+            isHoliday ? `Feiertag: ${holidayMap.get(dateISO)}` : "",
+            isClosure ? "Urlaub / Ausfall" : ""
+          ].filter(Boolean).join(" + ");
+          if (!notes.has(dateISO)) notes.set(dateISO, []);
+          notes.get(dateISO).push({kind:"OFF", text: reason || "Kein Unterricht"});
+        } else {
+          if (branch.type === "HAFEN") {
+            if (d >= windowStart) {
+              events.push({dateISO, kind:"HAFEN", title:"LKW/BUS-Theorie", timeText: branch.timeText});
+            }
+          } else {
+            if (d >= windowStart) {
+              const lessonNo = (topicIndex % TOPICS.length) + 1;
+              events.push({
+                dateISO, kind:"PKW",
+                lessonNo,
+                topicText: TOPICS[topicIndex % TOPICS.length],
+                timeText: branch.timeText
+              });
+            }
+            topicIndex++;
+          }
+        }
+      }
+      d = addDays(d,1);
+    }
+
+    const notesObj = {};
+    for (const [k,arr] of notes.entries()){
+      const dt = new Date(k+"T00:00:00");
+      if (dt >= windowStart && dt <= windowEnd) notesObj[k] = arr;
+    }
+
+    return {events, notesObj};
+  }
+
+  let currentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  function setView(mode){
+    const btnBoth = $("viewBoth"), btnCal=$("viewCal"), btnList=$("viewList");
+    btnBoth.classList.remove("active"); btnCal.classList.remove("active"); btnList.classList.remove("active");
+    if (mode==="both"){ elCalWrap.style.display="block"; elListWrap.style.display="block"; btnBoth.classList.add("active"); }
+    if (mode==="cal"){ elCalWrap.style.display="block"; elListWrap.style.display="none"; btnCal.classList.add("active"); }
+    if (mode==="list"){ elCalWrap.style.display="none"; elListWrap.style.display="block"; btnList.classList.add("active"); }
+  }
+
+  function renderAll(){
+    applyBranchAccent();
+    const b = getBranch();
+    const yearNow = new Date().getFullYear();
+    const closureSet = parseClosureSet((CONFIG.closures[b.id] || []));
+    const {events, notesObj} = buildScheduleForward(b, yearNow, closureSet);
+    renderCalendar(events, notesObj);
+    renderList(events, notesObj);
+  }
+
+  function renderCalendar(events, notesObj){
+    const eventMap = new Map();
+    for (const e of events){
+      if (!eventMap.has(e.dateISO)) eventMap.set(e.dateISO, []);
+      eventMap.get(e.dateISO).push(e);
+    }
+
+    const y=currentMonth.getFullYear();
+    const m=currentMonth.getMonth();
+    const firstOfMonth = new Date(y,m,1);
+    const firstIso = jsToIso(firstOfMonth.getDay());
+    const gridStart = addDays(firstOfMonth, -(firstIso - 1));
+
+    elMonthTitle.textContent = new Intl.DateTimeFormat("de-DE",{month:"long",year:"numeric"}).format(firstOfMonth);
+
+    const monthISO = `${y}-${pad2(m+1)}-`;
+    const monthEvents = events.filter(e=>e.dateISO.startsWith(monthISO));
+    const offCount = Object.keys(notesObj).filter(d=>d.startsWith(monthISO) && (notesObj[d]||[]).some(n=>n.kind==="OFF")).length;
+    const holCount = Object.keys(notesObj).filter(d=>d.startsWith(monthISO) && (notesObj[d]||[]).some(n=>n.kind==="HOLIDAY")).length;
+    elStat.innerHTML = `<strong>${monthEvents.length}</strong> Termine • ${holCount} Feiertage • ${offCount} OFF`;
+
+    elCalBody.innerHTML="";
+    let d=startOfDay(gridStart);
+    const now = new Date();
+
+    for (let week=0;week<6;week++){
+      const tr=document.createElement("tr");
+      for (let i=0;i<7;i++){
+        const td=document.createElement("td");
+        td.className="day";
+        if (d.getMonth()!==m) td.classList.add("muted");
+        if (d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate()) td.classList.add("today");
+
+        const k = toISODate(d);
+        td.innerHTML = `<div class="date"><span>${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</span></div>`;
+
+        const wrap=document.createElement("div");
+        wrap.className="badges";
+
+        const ns = notesObj[k] || [];
+        for (const n of ns){
+          const div=document.createElement("div");
+          div.className = (n.kind==="OFF") ? "badge off" : "badge holiday";
+          div.innerHTML = `
+            <div class="top">
+              <strong>${n.kind==="OFF" ? "Kein Unterricht" : "Feiertag"}</strong>
+              <span class="tag">${n.kind==="OFF" ? "OFF" : "Hinweis"}</span>
+            </div>
+            <div>${escapeHtml(n.text)}</div>`;
+          wrap.appendChild(div);
+        }
+
+        const evs = eventMap.get(k) || [];
+        for (const e of evs){
+          const div=document.createElement("div");
+          if (e.kind === "HAFEN") {
+            div.className = "badge hafen";
+            div.innerHTML = `
+              <div class="top">
+                <strong style="font-size:15px;font-weight:950">🚛 LKW / BUS</strong>
+                <span class="tag">Hafen</span>
+              </div>
+              <div style="font-size:12px">${escapeHtml(e.timeText)}</div>`;
+          } else {
+            div.className = "badge";
+            const s = topicStyle(e.lessonNo);
+            div.style.background = s.bg;
+            div.style.borderColor = s.border;
+            const emoji = TOPIC_EMOJIS[e.lessonNo-1] || "🚗";
+            div.innerHTML = `
+              <div class="top">
+                <strong style="font-size:14px;font-weight:950">THEMA ${e.lessonNo} ${emoji}</strong>
+                <span class="tag">PKW</span>
+              </div>
+              <div style="font-weight:650">${escapeHtml(e.topicText)}</div>
+              <div style="margin-top:4px;font-size:11px;color:#334155">🚗 PKW • ${escapeHtml(e.timeText)}</div>`;
+          }
+          wrap.appendChild(div);
+        }
+
+        if (wrap.childNodes.length) td.appendChild(wrap);
+        tr.appendChild(td);
+        d=addDays(d,1);
+      }
+      elCalBody.appendChild(tr);
+    }
+  }
+
+  function renderList(events, notesObj){
+    const y=currentMonth.getFullYear();
+    const m=currentMonth.getMonth();
+    const monthISO = `${y}-${pad2(m+1)}-`;
+
+    const monthNotes = Object.entries(notesObj)
+      .filter(([dateISO]) => dateISO.startsWith(monthISO))
+      .sort(([a],[b]) => a.localeCompare(b));
+
+    const monthEvents = events
+      .filter(e=>e.dateISO.startsWith(monthISO))
+      .sort((a,b)=>a.dateISO.localeCompare(b.dateISO));
+
+    elListWrap.innerHTML = `<h3>Termine im Monat</h3>`;
+
+    if (!monthEvents.length && !monthNotes.length){
+      elListWrap.innerHTML += `<div class="small">Keine Einträge in diesem Monat.</div>`;
+      return;
+    }
+
+    for (const [dateISO, arr] of monthNotes){
+      for (const n of arr){
+        const item=document.createElement("div");
+        item.className="item";
+        const d=new Date(dateISO+"T00:00:00");
+        const tag = (n.kind==="OFF") ? "OFF" : "Feiertag";
+        item.innerHTML = `
+          <div class="when">${fmtDE(d)} <span class="tag">${escapeHtml(tag)}</span></div>
+          <div class="small">${escapeHtml(n.text)}</div>`;
+        elListWrap.appendChild(item);
+      }
+    }
+
+    for (const e of monthEvents){
+      const item=document.createElement("div");
+      item.className="item";
+      const d=new Date(e.dateISO+"T00:00:00");
+
+      if (e.kind==="HAFEN"){
+        item.innerHTML = `
+          <div class="when">${fmtDE(d)} • ${escapeHtml(e.timeText)} <span class="tag">🚛 Hafen</span></div>
+          <div class="small">LKW/BUS-Theorie</div>`;
+      } else {
+        const emoji = TOPIC_EMOJIS[e.lessonNo-1] || "🚗";
+        item.innerHTML = `
+          <div class="when">${fmtDE(d)} • ${escapeHtml(e.timeText)} <span class="tag">🚗 PKW</span></div>
+          <div class="small" style="font-weight:900;color:#111827">THEMA ${e.lessonNo} ${emoji}</div>
+          <div class="small">${escapeHtml(e.topicText)}</div>`;
+      }
+      elListWrap.appendChild(item);
+    }
+  }
+
+  function init(){
+    elBranch.innerHTML="";
+    for (const b of BRANCHES){
+      const opt=document.createElement("option");
+      opt.value=b.id;
+      opt.textContent=`${b.name} • ${b.dayLabel} • ${b.timeText}`;
+      elBranch.appendChild(opt);
+    }
+    elBranch.value = "innenstadt";
+    applyBranchAccent();
+
+    elBranch.addEventListener("change", ()=>{ applyBranchAccent(); renderAll(); });
+
+    $("prevMonth").addEventListener("click", ()=>{ currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()-1, 1); renderAll(); });
+    $("nextMonth").addEventListener("click", ()=>{ currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 1); renderAll(); });
+
+    $("goToday").addEventListener("click", ()=>{
+      const n = new Date();
+      currentMonth = new Date(n.getFullYear(), n.getMonth(), 1);
+      renderAll();
+      $("mainCard").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    $("viewBoth").addEventListener("click", ()=>setView("both"));
+    $("viewCal").addEventListener("click", ()=>setView("cal"));
+    $("viewList").addEventListener("click", ()=>setView("list"));
+
+    setView("both");
+    renderAll();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
