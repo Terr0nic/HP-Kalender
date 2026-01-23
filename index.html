@@ -10,52 +10,184 @@
       --bg:#f6f7fb;
       --card:#fff;
       --text:#0f172a;
-      --muted:#6b7280;
-      --border:#e6e9f2;
+      --muted:#64748b;
+      --border:#e5e7eb;
+      --shadow:0 14px 40px rgba(2,6,23,.10);
+      --radius:18px;
+      --branchAccent:#2563eb;
 
       --holidayBg:#f1f5f9;
       --holidayBorder:#cbd5e1;
 
-      --radius:16px;
-      --shadow:0 12px 30px rgba(0,0,0,.10);
-
-      --branchAccent:#2563eb;
+      --base:16px;
+      --line:1.45;
+      --h1:24px;
+      --btn:15px;
     }
+
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1280px;margin:24px auto;padding:0 16px}
-    h1{margin:0 0 6px;font-size:22px}
-    .sub{color:var(--muted);font-size:12px;margin-bottom:14px;line-height:1.35}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      font-size:var(--base);
+      line-height:var(--line);
+    }
 
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;position:relative;overflow:hidden}
-    .card.accent::before{content:"";position:absolute;left:0;top:0;right:0;height:6px;background:var(--branchAccent)}
+    .wrap{max-width:1280px;margin:28px auto;padding:0 16px}
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-bottom:12px;
+    }
+    h1{
+      margin:0;
+      font-size:var(--h1);
+      letter-spacing:-.2px;
+      display:flex; gap:10px; align-items:center;
+    }
 
-    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .leftControls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    select,button{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;font-weight:800;color:#111827;cursor:pointer}
-    button.secondary{background:#eef2ff}
-    .monthTitle{font-weight:950;font-size:15px}
-    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:7px 10px;font-size:12px;background:#fafbff;color:#111827}
-    .pill strong{color:var(--branchAccent)}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; left:0; top:0; right:0;
+      height:6px; background:var(--branchAccent);
+    }
 
-    .viewbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
-    .viewbar button{padding:9px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:#111827;font-weight:950}
-    .viewbar button.active{background:#111827;color:#fff;border-color:#111827}
+    select,button{
+      font-size:var(--btn);
+      padding:11px 13px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
+      font-weight:900;
+      color:#111827;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    select:hover,button:hover{
+      box-shadow:0 10px 22px rgba(15,23,42,.08);
+      border-color:rgba(37,99,235,.25);
+    }
+    button.primary{
+      background:var(--branchAccent);
+      border-color:transparent;
+      color:#fff;
+    }
+    button.ghost{background:#fff}
+    button.pill{
+      border-radius:999px;
+      padding:10px 14px;
+    }
+    .iconBtn{
+      width:42px;height:42px;
+      border-radius:999px;
+      padding:0;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:18px;
+      font-weight:950;
+    }
 
-    .legend{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
-    .legend .pill{background:#fff}
-    .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
-    .dot.pkw{background:#2563eb}
-    .dot.hafen{background:#f59e0b}
-    .dot.holiday{background:#94a3b8}
-    .dot.off{background:#ef4444}
+    /* Branch buttons */
+    .branchBar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+    .bbtn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:999px;border:1px solid var(--border);
+      background:#fff;font-weight:950;color:#111827;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .bbtn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(16,24,40,.08);border-color:rgba(37,99,235,.25)}
+    .bbtn .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+    .bbtn.active{border-color:rgba(15,23,42,.25);background:#111827;color:#fff}
 
+    /* Premium top toolbar */
+    .toolbar{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:#fff;
+      margin-bottom:12px;
+    }
+    @media (max-width: 980px){
+      .toolbar{grid-template-columns:1fr}
+    }
+
+    .nextBar{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfcff 100%);
+      padding:12px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .nextBar::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0; width:7px;
+      background:var(--branchAccent);
+      opacity:.85;
+    }
+    .nextTitle{font-weight:950; color:#334155; font-size:12px; display:flex; gap:8px; align-items:center}
+    .nextLine{font-weight:950; font-size:15px; margin-top:6px}
+    .nextSub{color:var(--muted); font-size:12px; margin-top:4px; line-height:1.35}
+
+    .controlsRow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end;
+    }
+    .controlsRow select{min-width:320px}
+    @media (max-width:520px){ .controlsRow select{min-width:100%} }
+
+    /* Tabs row */
+    .bar2{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-start;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:#fff;
+      margin-bottom:12px;
+    }
+
+    .seg{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .seg button{border-radius:999px}
+    .seg button.active{background:#111827;color:#fff;border-color:#111827}
+
+    /* Calendar */
+    #calendarWrap{
+      padding-top:8px;
+      border-top:1px solid var(--border);
+    }
     table.cal{width:100%;border-collapse:separate;border-spacing:8px}
-    .cal th{font-size:12px;color:#555;text-align:left;padding:0 6px}
-    .day{border:1px solid var(--border);border-radius:16px;padding:10px;min-height:118px;background:linear-gradient(180deg,#fff 0%, #fbfcff 100%);transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease}
+    .cal th{font-size:12px;color:#475569;text-align:left;padding:0 6px}
+
+    .day{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:12px;
+      min-height:142px;
+      background:linear-gradient(180deg,#fff 0%, #fbfcff 100%);
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      position:relative;
+    }
     .day:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(16,24,40,.10);border-color:rgba(37,99,235,.25)}
     .day.muted{opacity:.45}
-    .date{font-size:12px;color:#555;display:flex;justify-content:space-between;gap:8px}
+    .day.past{opacity:.45; filter:saturate(.85)}
+    .dateLine{
+      display:flex; justify-content:space-between; align-items:center; gap:8px;
+      color:#475569; font-size:12px;
+    }
+    .dateLine strong{color:#0f172a}
+    .wk{font-weight:900; color:#334155}
 
     @keyframes pulseRing {
       0%   { box-shadow:0 0 0 0 rgba(37,99,235,.35); }
@@ -64,68 +196,162 @@
     }
     .day.today{outline:2px solid rgba(37,99,235,.25);outline-offset:2px;animation:pulseRing 2.2s ease-out infinite}
 
-    .badges{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-    .badge{border-radius:14px;padding:8px 9px;font-size:12px;border:1px solid rgba(0,0,0,.06);line-height:1.25;background:#f3f6ff}
+    .badges{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .badge{
+      border-radius:16px;
+      padding:10px 10px;
+      font-size:12px;
+      border:1px solid rgba(0,0,0,.06);
+      line-height:1.25;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    .badge::before{
+      content:""; position:absolute; left:0; top:0; bottom:0; width:6px;
+      background:rgba(37,99,235,.45);
+    }
     .badge .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
     .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:#fff;white-space:nowrap}
 
     .badge.hafen{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.24)}
+    .badge.hafen::before{background:rgba(245,158,11,.62)}
     .badge.off{background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.24)}
-    .badge.holiday{background:var(--holidayBg) !important;border-color:var(--holidayBorder) !important;color:#475569;font-style:italic}
-    .badge.holiday strong{font-style:normal;color:#334155}
+    .badge.off::before{background:rgba(239,68,68,.62)}
+    .badge.holiday{background:var(--holidayBg);border-color:var(--holidayBorder);color:#475569;font-style:italic}
+    .badge.holiday::before{background:#94a3b8}
 
-    .list{margin-top:12px}
-    .list h3{margin:12px 0 10px;font-size:16px}
-    .item{border:1px solid var(--border);border-radius:16px;padding:10px;background:#fff}
+    /* List */
+    .list{
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .listHead{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin:10px 0 8px;
+    }
+    .list h3{margin:0;font-size:16px}
+    .hint{color:var(--muted); font-size:12px; font-weight:750}
+    .item{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:12px;
+      background:#fff;
+      cursor:pointer;
+    }
     .item + .item{margin-top:10px}
     .when{font-weight:950}
     .small{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed; inset:0; background:rgba(15,23,42,.55);
+      display:none; align-items:center; justify-content:center;
+      padding:18px; z-index:9999;
+    }
+    .modal{
+      width:min(560px, 100%);
+      background:#fff; border:1px solid rgba(0,0,0,.08);
+      border-radius:20px; box-shadow:0 30px 80px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+    }
+    .modalHeader .title{font-weight:950}
+    .modalHeader .meta{color:var(--muted); font-size:12px; margin-top:4px; line-height:1.35}
+    .modalClose{border:1px solid var(--border); border-radius:14px; background:#fff; padding:8px 10px; cursor:pointer; font-weight:950}
+    .modalBody{padding:14px}
+    .modalBadge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border); background:#fafbff; font-weight:950; font-size:12px;
+    }
+    .modalBody p{margin:10px 0 0; line-height:1.45}
   </style>
 </head>
 
 <body>
 <div class="wrap">
-  <h1>🚦 Theorie-Unterricht</h1>
-  <div class="sub">Filiale auswählen • Monat wechseln • Kalender/Liste ansehen</div>
+  <div class="header">
+    <h1>🚦 Theorie-Unterricht</h1>
+  </div>
 
-  <div class="card accent" id="mainCard">
-    <div class="topbar">
-      <div class="leftControls">
-        <select id="branch"></select>
-        <button class="secondary" id="prevMonth" type="button">←</button>
-        <button class="secondary" id="goToday" type="button">Heute</button>
-        <button class="secondary" id="nextMonth" type="button">→</button>
+  <div class="card" id="mainCard">
+
+    <!-- Branch buttons -->
+    <div class="branchBar" id="branchBar"></div>
+
+    <!-- Premium toolbar: next + controls -->
+    <div class="toolbar">
+      <div class="nextBar" id="nextBar">
+        <div class="nextTitle">⏭️ Nächster Unterricht</div>
+        <div class="nextLine" id="nextLine">—</div>
+        <div class="nextSub" id="nextSub">—</div>
       </div>
-      <div class="monthTitle" id="monthTitle"></div>
-      <div class="pill" id="stat">—</div>
+
+      <div class="controlsRow">
+        <select id="branch"></select>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; gap:8px; align-items:center; border:1px solid var(--border); border-radius:999px; padding:6px 8px; background:#fff;">
+            <button class="iconBtn ghost" id="prevMonth" type="button" aria-label="Vorheriger Monat">‹</button>
+            <div style="font-weight:950; min-width:170px; text-align:center" id="monthTitle">—</div>
+            <button class="iconBtn ghost" id="nextMonth" type="button" aria-label="Nächster Monat">›</button>
+          </div>
+          <button class="pill primary" id="goToday" type="button">Heute</button>
+        </div>
+      </div>
     </div>
 
-    <div class="viewbar">
-      <button id="viewBoth" class="active" type="button">Beides</button>
-      <button id="viewCal" type="button">Kalender</button>
-      <button id="viewList" type="button">Liste</button>
+    <!-- Tabs -->
+    <div class="bar2">
+      <div class="seg">
+        <button id="viewBoth" class="active" type="button">Kalender + Liste</button>
+        <button id="viewCal" type="button">Kalender</button>
+        <button id="viewList" type="button">Liste</button>
+      </div>
     </div>
 
-    <div class="legend">
-      <span class="pill"><span class="dot pkw"></span>PKW Thema</span>
-      <span class="pill"><span class="dot hafen"></span>Hafen LKW/BUS</span>
-      <span class="pill"><span class="dot holiday"></span>Feiertag</span>
-      <span class="pill"><span class="dot off"></span>OFF</span>
-    </div>
-
-    <div id="calendarWrap" style="margin-top:10px">
+    <!-- Calendar -->
+    <div id="calendarWrap">
       <table class="cal">
-        <thead><tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr></thead>
+        <thead>
+          <tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr>
+        </thead>
         <tbody id="calBody"></tbody>
       </table>
     </div>
 
+    <!-- List -->
     <div class="list" id="listWrap"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modalOverlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Details">
+  <div class="modal">
+    <div class="modalHeader">
+      <div>
+        <div class="title" id="mTitle">—</div>
+        <div class="meta" id="mMeta">—</div>
+      </div>
+      <button class="modalClose" id="mClose" type="button">Schließen</button>
+    </div>
+    <div class="modalBody">
+      <span class="modalBadge" id="mBadge">—</span>
+      <p id="mBody">—</p>
+    </div>
   </div>
 </div>
 
 <script>
 (() => {
+  /* ======================
+     NUR HIER PFLEGEN
+  ====================== */
   const CONFIG = {
     anchors: {
       hemshof:    { date: "2026-01-20", lessonNo: 2 },
@@ -167,18 +393,29 @@
 
   const $ = (id) => document.getElementById(id);
   const elBranch = $("branch");
+  const elBranchBar = $("branchBar");
   const elMonthTitle = $("monthTitle");
-  const elStat = $("stat");
   const elCalBody = $("calBody");
   const elListWrap = $("listWrap");
-  const elCalWrap = $("calendarWrap");
+  const elNextLine = $("nextLine");
+  const elNextSub = $("nextSub");
+
+  const modalOverlay = $("modalOverlay");
+  const mTitle = $("mTitle");
+  const mMeta = $("mMeta");
+  const mBadge = $("mBadge");
+  const mBody = $("mBody");
 
   const pad2 = (n)=>String(n).padStart(2,"0");
   const toISODate = (d)=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
   const startOfDay = (d)=>new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const addDays = (d,n)=>new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
   const jsToIso = (jsDay)=>(jsDay===0?7:jsDay);
+
   const fmtDE = (d)=>new Intl.DateTimeFormat("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"}).format(d);
+  const fmtWk = (d)=>new Intl.DateTimeFormat("de-DE",{weekday:"short"}).format(d);
+  const fmtDayMonth = (d)=>new Intl.DateTimeFormat("de-DE",{day:"2-digit",month:"2-digit"}).format(d);
+
   const escapeHtml = (s)=>String(s)
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -286,11 +523,9 @@
         anchorLessonNo = Math.min(14, Math.max(1, parseInt(a.lessonNo,10)));
       }
     }
-    if (branch.type === "PKW") {
-      anchorDate = nextMatchingLessonDay(anchorDate, branch.isoDays);
-    }
+    if (branch.type === "PKW") anchorDate = nextMatchingLessonDay(anchorDate, branch.isoDays);
 
-    let topicIndex = anchorLessonNo - 1; // forward-only start
+    let topicIndex = anchorLessonNo - 1;
     const events = [];
     let d = startOfDay(anchorDate);
 
@@ -310,18 +545,11 @@
           notes.get(dateISO).push({kind:"OFF", text: reason || "Kein Unterricht"});
         } else {
           if (branch.type === "HAFEN") {
-            if (d >= windowStart) {
-              events.push({dateISO, kind:"HAFEN", title:"LKW/BUS-Theorie", timeText: branch.timeText});
-            }
+            if (d >= windowStart) events.push({dateISO, kind:"HAFEN", title:"LKW/BUS-Theorie", timeText: branch.timeText});
           } else {
             if (d >= windowStart) {
               const lessonNo = (topicIndex % TOPICS.length) + 1;
-              events.push({
-                dateISO, kind:"PKW",
-                lessonNo,
-                topicText: TOPICS[topicIndex % TOPICS.length],
-                timeText: branch.timeText
-              });
+              events.push({dateISO, kind:"PKW", lessonNo, topicText: TOPICS[topicIndex % TOPICS.length], timeText: branch.timeText});
             }
             topicIndex++;
           }
@@ -335,31 +563,102 @@
       const dt = new Date(k+"T00:00:00");
       if (dt >= windowStart && dt <= windowEnd) notesObj[k] = arr;
     }
-
     return {events, notesObj};
   }
 
+  // UI state
   let currentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  let currentView = "both"; // both | cal | list
 
   function setView(mode){
-    const btnBoth = $("viewBoth"), btnCal=$("viewCal"), btnList=$("viewList");
-    btnBoth.classList.remove("active"); btnCal.classList.remove("active"); btnList.classList.remove("active");
-    if (mode==="both"){ elCalWrap.style.display="block"; elListWrap.style.display="block"; btnBoth.classList.add("active"); }
-    if (mode==="cal"){ elCalWrap.style.display="block"; elListWrap.style.display="none"; btnCal.classList.add("active"); }
-    if (mode==="list"){ elCalWrap.style.display="none"; elListWrap.style.display="block"; btnList.classList.add("active"); }
+    currentView = mode;
+    $("viewBoth").classList.toggle("active", mode==="both");
+    $("viewCal").classList.toggle("active", mode==="cal");
+    $("viewList").classList.toggle("active", mode==="list");
+
+    $("calendarWrap").style.display = (mode==="list") ? "none" : "block";
+    $("listWrap").style.display = (mode==="cal") ? "none" : "block";
+  }
+
+  function buildBranchButtons(){
+    elBranchBar.innerHTML = "";
+    for (const b of BRANCHES){
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "bbtn";
+      btn.dataset.id = b.id;
+      btn.innerHTML = `<span class="dot" style="background:${b.accent}"></span><span class="label">${escapeHtml(b.name)}</span>`;
+      btn.addEventListener("click", () => {
+        elBranch.value = b.id;
+        applyBranchAccent();
+        highlightBranchButtons();
+        renderAll();
+      });
+      elBranchBar.appendChild(btn);
+    }
+  }
+  function highlightBranchButtons(){
+    const current = elBranch.value;
+    [...elBranchBar.querySelectorAll(".bbtn")].forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.id === current);
+    });
+  }
+
+  function openModal({title, meta, badge, body}){
+    mTitle.textContent = title || "";
+    mMeta.textContent = meta || "";
+    mBadge.textContent = badge || "";
+    mBody.textContent = body || "";
+    modalOverlay.style.display = "flex";
+  }
+  function closeModal(){ modalOverlay.style.display = "none"; }
+
+  function computeNextLesson(events){
+    const now = startOfDay(new Date());
+    const sorted = [...events].sort((a,b)=>a.dateISO.localeCompare(b.dateISO));
+    return sorted.find(e => new Date(e.dateISO+"T00:00:00") >= now) || null;
+  }
+
+  function renderNext(branch, events){
+    const next = computeNextLesson(events);
+    if (!next){
+      elNextLine.textContent = "—";
+      elNextSub.textContent = "Keine Termine im Zeitraum.";
+      return;
+    }
+    const d = new Date(next.dateISO+"T00:00:00");
+    const wk = fmtWk(d).replace(".", "");
+    const dm = fmtDayMonth(d);
+
+    if (next.kind === "HAFEN"){
+      elNextLine.textContent = `${wk}, ${dm} • 🚛 LKW/BUS`;
+      elNextSub.textContent = `${branch.name} • ${branch.timeText}`;
+    } else {
+      const emoji = TOPIC_EMOJIS[next.lessonNo-1] || "🚗";
+      elNextLine.textContent = `${wk}, ${dm} • THEMA ${next.lessonNo} ${emoji}`;
+      elNextSub.textContent = `${next.topicText} • ${branch.timeText}`;
+    }
   }
 
   function renderAll(){
     applyBranchAccent();
+
     const b = getBranch();
     const yearNow = new Date().getFullYear();
     const closureSet = parseClosureSet((CONFIG.closures[b.id] || []));
     const {events, notesObj} = buildScheduleForward(b, yearNow, closureSet);
-    renderCalendar(events, notesObj);
-    renderList(events, notesObj);
+
+    const todayISO = toISODate(new Date());
+    const eventsUpcoming = events.filter(e => e.dateISO >= todayISO);
+
+    renderNext(b, eventsUpcoming.length ? eventsUpcoming : events);
+    renderCalendar(b, events, notesObj);
+    renderList(b, eventsUpcoming, notesObj);
+
+    highlightBranchButtons();
   }
 
-  function renderCalendar(events, notesObj){
+  function renderCalendar(branch, events, notesObj){
     const eventMap = new Map();
     for (const e of events){
       if (!eventMap.has(e.dateISO)) eventMap.set(e.dateISO, []);
@@ -374,15 +673,10 @@
 
     elMonthTitle.textContent = new Intl.DateTimeFormat("de-DE",{month:"long",year:"numeric"}).format(firstOfMonth);
 
-    const monthISO = `${y}-${pad2(m+1)}-`;
-    const monthEvents = events.filter(e=>e.dateISO.startsWith(monthISO));
-    const offCount = Object.keys(notesObj).filter(d=>d.startsWith(monthISO) && (notesObj[d]||[]).some(n=>n.kind==="OFF")).length;
-    const holCount = Object.keys(notesObj).filter(d=>d.startsWith(monthISO) && (notesObj[d]||[]).some(n=>n.kind==="HOLIDAY")).length;
-    elStat.innerHTML = `<strong>${monthEvents.length}</strong> Termine • ${holCount} Feiertage • ${offCount} OFF`;
-
     elCalBody.innerHTML="";
     let d=startOfDay(gridStart);
     const now = new Date();
+    const todayISO = toISODate(now);
 
     for (let week=0;week<6;week++){
       const tr=document.createElement("tr");
@@ -390,15 +684,22 @@
         const td=document.createElement("td");
         td.className="day";
         if (d.getMonth()!==m) td.classList.add("muted");
+
+        const dayISO = toISODate(d);
+        if (dayISO < todayISO) td.classList.add("past");
         if (d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate()) td.classList.add("today");
 
-        const k = toISODate(d);
-        td.innerHTML = `<div class="date"><span>${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</span></div>`;
+        const wk = fmtWk(d).replace(".", "");
+        td.innerHTML = `
+          <div class="dateLine">
+            <span class="wk">${wk}</span>
+            <strong>${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</strong>
+          </div>`;
 
         const wrap=document.createElement("div");
         wrap.className="badges";
 
-        const ns = notesObj[k] || [];
+        const ns = notesObj[dayISO] || [];
         for (const n of ns){
           const div=document.createElement("div");
           div.className = (n.kind==="OFF") ? "badge off" : "badge holiday";
@@ -408,12 +709,21 @@
               <span class="tag">${n.kind==="OFF" ? "OFF" : "Hinweis"}</span>
             </div>
             <div>${escapeHtml(n.text)}</div>`;
+          div.addEventListener("click", () => {
+            openModal({
+              title: n.kind==="OFF" ? "Kein Unterricht" : "Feiertag",
+              meta: `${branch.name} • ${fmtDE(new Date(dayISO+"T00:00:00"))}`,
+              badge: n.kind==="OFF" ? "OFF" : "Feiertag",
+              body: n.text
+            });
+          });
           wrap.appendChild(div);
         }
 
-        const evs = eventMap.get(k) || [];
+        const evs = eventMap.get(dayISO) || [];
         for (const e of evs){
           const div=document.createElement("div");
+
           if (e.kind === "HAFEN") {
             div.className = "badge hafen";
             div.innerHTML = `
@@ -421,12 +731,22 @@
                 <strong style="font-size:15px;font-weight:950">🚛 LKW / BUS</strong>
                 <span class="tag">Hafen</span>
               </div>
-              <div style="font-size:12px">${escapeHtml(e.timeText)}</div>`;
+              <div style="font-size:12px;color:#334155">${escapeHtml(e.timeText)}</div>`;
+            div.addEventListener("click", () => {
+              openModal({
+                title: "🚛 LKW / BUS – Theorie",
+                meta: `${branch.name} • ${fmtDE(new Date(e.dateISO+"T00:00:00"))}`,
+                badge: `Hafen • ${e.timeText}`,
+                body: "Spezialunterricht im Hafen (LKW/BUS)."
+              });
+            });
           } else {
             div.className = "badge";
             const s = topicStyle(e.lessonNo);
             div.style.background = s.bg;
             div.style.borderColor = s.border;
+            div.style.boxShadow = "inset 6px 0 0 0 " + s.border;
+
             const emoji = TOPIC_EMOJIS[e.lessonNo-1] || "🚗";
             div.innerHTML = `
               <div class="top">
@@ -434,8 +754,17 @@
                 <span class="tag">PKW</span>
               </div>
               <div style="font-weight:650">${escapeHtml(e.topicText)}</div>
-              <div style="margin-top:4px;font-size:11px;color:#334155">🚗 PKW • ${escapeHtml(e.timeText)}</div>`;
+              <div style="margin-top:4px;font-size:11px;color:#334155">${escapeHtml(e.timeText)}</div>`;
+            div.addEventListener("click", () => {
+              openModal({
+                title: `THEMA ${e.lessonNo} ${emoji}`,
+                meta: `${branch.name} • ${fmtDE(new Date(e.dateISO+"T00:00:00"))} • ${e.timeText}`,
+                badge: "🚗 PKW Theorie",
+                body: e.topicText
+              });
+            });
           }
+
           wrap.appendChild(div);
         }
 
@@ -447,23 +776,29 @@
     }
   }
 
-  function renderList(events, notesObj){
+  function renderList(branch, eventsUpcoming, notesObj){
     const y=currentMonth.getFullYear();
     const m=currentMonth.getMonth();
     const monthISO = `${y}-${pad2(m+1)}-`;
 
-    const monthNotes = Object.entries(notesObj)
-      .filter(([dateISO]) => dateISO.startsWith(monthISO))
-      .sort(([a],[b]) => a.localeCompare(b));
-
-    const monthEvents = events
+    const monthEvents = eventsUpcoming
       .filter(e=>e.dateISO.startsWith(monthISO))
       .sort((a,b)=>a.dateISO.localeCompare(b.dateISO));
 
-    elListWrap.innerHTML = `<h3>Termine im Monat</h3>`;
+    const todayISO = toISODate(new Date());
+    const monthNotes = Object.entries(notesObj)
+      .filter(([dateISO]) => dateISO.startsWith(monthISO) && dateISO >= todayISO)
+      .sort(([a],[b]) => a.localeCompare(b));
+
+    elListWrap.innerHTML = `
+      <div class="listHead">
+        <h3>Nächste Termine im Monat</h3>
+        <div class="hint">${escapeHtml(branch.name)}</div>
+      </div>
+    `;
 
     if (!monthEvents.length && !monthNotes.length){
-      elListWrap.innerHTML += `<div class="small">Keine Einträge in diesem Monat.</div>`;
+      elListWrap.innerHTML += `<div class="small">Keine kommenden Einträge in diesem Monat.</div>`;
       return;
     }
 
@@ -476,6 +811,14 @@
         item.innerHTML = `
           <div class="when">${fmtDE(d)} <span class="tag">${escapeHtml(tag)}</span></div>
           <div class="small">${escapeHtml(n.text)}</div>`;
+        item.addEventListener("click", () => {
+          openModal({
+            title: n.kind==="OFF" ? "Kein Unterricht" : "Feiertag",
+            meta: `${branch.name} • ${fmtDE(d)}`,
+            badge: tag,
+            body: n.text
+          });
+        });
         elListWrap.appendChild(item);
       }
     }
@@ -489,12 +832,28 @@
         item.innerHTML = `
           <div class="when">${fmtDE(d)} • ${escapeHtml(e.timeText)} <span class="tag">🚛 Hafen</span></div>
           <div class="small">LKW/BUS-Theorie</div>`;
+        item.addEventListener("click", () => {
+          openModal({
+            title: "🚛 LKW / BUS – Theorie",
+            meta: `${branch.name} • ${fmtDE(d)} • ${e.timeText}`,
+            badge: "Hafen",
+            body: "Spezialunterricht im Hafen (LKW/BUS)."
+          });
+        });
       } else {
         const emoji = TOPIC_EMOJIS[e.lessonNo-1] || "🚗";
         item.innerHTML = `
           <div class="when">${fmtDE(d)} • ${escapeHtml(e.timeText)} <span class="tag">🚗 PKW</span></div>
-          <div class="small" style="font-weight:900;color:#111827">THEMA ${e.lessonNo} ${emoji}</div>
+          <div class="small" style="font-weight:950;color:#111827">THEMA ${e.lessonNo} ${emoji}</div>
           <div class="small">${escapeHtml(e.topicText)}</div>`;
+        item.addEventListener("click", () => {
+          openModal({
+            title: `THEMA ${e.lessonNo} ${emoji}`,
+            meta: `${branch.name} • ${fmtDE(d)} • ${e.timeText}`,
+            badge: "🚗 PKW Theorie",
+            body: e.topicText
+          });
+        });
       }
       elListWrap.appendChild(item);
     }
@@ -509,13 +868,21 @@
       elBranch.appendChild(opt);
     }
     elBranch.value = "innenstadt";
+
+    buildBranchButtons();
     applyBranchAccent();
+    highlightBranchButtons();
 
-    elBranch.addEventListener("change", ()=>{ applyBranchAccent(); renderAll(); });
+    elBranch.addEventListener("change", ()=>{ applyBranchAccent(); highlightBranchButtons(); renderAll(); });
 
-    $("prevMonth").addEventListener("click", ()=>{ currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()-1, 1); renderAll(); });
-    $("nextMonth").addEventListener("click", ()=>{ currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 1); renderAll(); });
-
+    $("prevMonth").addEventListener("click", ()=>{
+      currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()-1, 1);
+      renderAll();
+    });
+    $("nextMonth").addEventListener("click", ()=>{
+      currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 1);
+      renderAll();
+    });
     $("goToday").addEventListener("click", ()=>{
       const n = new Date();
       currentMonth = new Date(n.getFullYear(), n.getMonth(), 1);
@@ -527,7 +894,13 @@
     $("viewCal").addEventListener("click", ()=>setView("cal"));
     $("viewList").addEventListener("click", ()=>setView("list"));
 
-    setView("both");
+    $("mClose").addEventListener("click", ()=>{ modalOverlay.style.display="none"; });
+    modalOverlay.addEventListener("click", (e)=>{ if (e.target === modalOverlay) modalOverlay.style.display="none"; });
+    document.addEventListener("keydown", (e)=>{ if (e.key === "Escape") modalOverlay.style.display="none"; });
+
+    if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) setView("list");
+    else setView("both");
+
     renderAll();
   }
 
